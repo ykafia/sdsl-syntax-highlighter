@@ -1,0 +1,42 @@
+{
+  "name": "sdsl-syntax-highlighter",
+  "displayName": "SDSL Syntax Highlighter",
+  "description": "Syntax highlighting for SDSL",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.81.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "configurationDefaults": {
+    "sdsl": {
+      "editor.semanticHighlighting.enabled": true
+    }
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "sdsl",
+        "aliases": [
+          "SDSL",
+          "sdsl"
+        ],
+        "extensions": [
+          "sdsl"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "sdsl",
+        "scopeName": "source.sdsl",
+        "path": "./syntaxes/sdsl.tmLanguage.json"
+      }
+    ]
+  },
+  "devDependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}
