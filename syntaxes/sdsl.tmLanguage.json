@@ -2,36 +2,667 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "SDSL",
 	"patterns": [
+        {
+            "include": "#preprocessor"
+        },
 		{
-			"include": "#keywords"
+			"include": "#declarations"
 		},
 		{
-			"include": "#strings"
-		}
-	],
+            "include": "#comment"
+        }
+    ],
+	
+	
 	"repository": {
-		"keywords": {
-			"patterns": [
-				{
-					"include": "#types"
-				},
-				{
-				"name": "keyword.control.sdsl",
-				"match": "\\b(if|while|for|return|stage|stream|virtual|abstract|compose|foreach|var|shader|(void|bool|byte|sbyte|half|uint|int|float|double)|((bool|byte|sbyte|half|uint|int|float|double)[2-4])|((bool|byte|sbyte|half|uint|int|float|double)[2-4]x[2-4]))\\b"
-				}
-		]
-		},
-		"strings": {
-			"name": "string.quoted.double.sdsl",
-			"begin": "\"",
-			"end": "\"",
-			"patterns": [
-				{
-					"name": "constant.character.escape.sdsl",
-					"match": "\\.*\\."
-				}
-			]
-		}
+
+		"declarations": {
+            "patterns": [
+                {
+                    "include": "#namespace-declaration"
+                },
+                {
+                    "include": "#type-declarations"
+                },
+                {
+                    "include": "#punctuation-semicolon"
+                }
+            ]
+        },
+		"namespace-declaration": {
+            "begin": "\\b(namespace)\\s+",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.other.namespace.sdsl"
+                }
+            },
+            "end": "(?<=\\})|(?=;)",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "name": "entity.name.type.namespace.sdsl",
+                    "match": "@?[_[:alpha:]][_[:alnum:]]*"
+                },
+                {
+                    "include": "#punctuation-accessor"
+                },
+                {
+                    "begin": "\\{",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.open.sdsl"
+                        }
+                    },
+                    "end": "\\}",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.close.sdsl"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#declarations"
+                        },
+                        {
+                            "include": "#using-directive"
+                        },
+                        {
+                            "include": "#punctuation-semicolon"
+                        }
+                    ]
+                }
+            ]
+        },
+
+		"type-declarations": {
+            "patterns": [
+                {
+                    "include": "#preprocessor"
+                },
+                {
+                    "include": "#comment"
+                },
+                {
+                    "include": "#storage-modifier"
+                },
+                {
+                    "include": "#shader-declaration"
+                },
+                {
+                    "include": "#enum-declaration"
+                },
+                {
+                    "include": "#attribute-section"
+                },
+                {
+                    "include": "#punctuation-semicolon"
+                }
+            ]
+        },
+
+		"shader-declaration": {
+            "begin": "(?=\\bshader\\b)",
+            "end": "(?<=\\})|(?=;)",
+            "patterns": [
+                {
+                    "begin": "(?x)\n\\b(shader)\\b\\s+\n(@?[_[:alpha:]][_[:alnum:]]*)\\s*",
+                    "beginCaptures": {
+                        
+                        "1": {
+                            "name": "keyword.other.shader.sdsl"
+                        },
+                        "2": {
+                            "name": "entity.name.type.shader.sdsl"
+                        }
+                    },
+                    "end": "(?=\\{)|(?=;)",
+                    "patterns": [
+                        {
+                            "include": "#comment"
+                        },
+                        {
+                            "include": "#type-parameter-list"
+                        },
+                        {
+                            "include": "#parenthesized-parameter-list"
+                        },
+                        {
+                            "include": "#base-types"
+                        },
+                        {
+                            "include": "#generic-constraints"
+                        }
+                    ]
+                },
+                {
+                    "begin": "\\{",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.open.sdsl"
+                        }
+                    },
+                    "end": "\\}",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.close.sdsl"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#shader-or-struct-members"
+                        }
+                    ]
+                },
+                {
+                    "include": "#preprocessor"
+                },
+                {
+                    "include": "#comment"
+                }
+            ]
+        },
+		"struct-declaration": {
+            "begin": "\\bstruct\\b)",
+            "end": "(?<=\\})",
+            "patterns": [
+                {
+                    "begin": "(struct)\\b\\s+\n(@?[_[:alpha:]][_[:alnum:]]*)",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "keyword.other.struct.sdsl"
+                        },
+                        "1": {
+                            "name": "entity.name.type.struct.sdsl"
+                        }
+                    },
+                    "end": "(?=\\{)",
+                    "patterns": [
+                        {
+                            "include": "#comment"
+                        },
+                        {
+                            "include": "#type-parameter-list"
+                        },
+                        {
+                            "include": "#parenthesized-parameter-list"
+                        },
+                        {
+                            "include": "#base-types"
+                        },
+                        {
+                            "include": "#generic-constraints"
+                        }
+                    ]
+                },
+                {
+                    "begin": "\\{",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.open.sdsl"
+                        }
+                    },
+                    "end": "\\}",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.close.sdsl"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#shader-members"
+                        }
+                    ]
+                },
+                {
+                    "include": "#preprocessor"
+                },
+                {
+                    "include": "#comment"
+                }
+            ]
+        },
+		"enum-declaration": {
+            "begin": "(?=\\benum\\b)",
+            "end": "(?<=\\})",
+            "patterns": [
+                {
+                    "begin": "(?=enum)",
+                    "end": "(?=\\{)",
+                    "patterns": [
+                        {
+                            "include": "#comment"
+                        },
+                        {
+                            "match": "(enum)\\s+(@?[_[:alpha:]][_[:alnum:]]*)",
+                            "captures": {
+                                "1": {
+                                    "name": "keyword.other.enum.sdsl"
+                                },
+                                "2": {
+                                    "name": "entity.name.type.enum.sdsl"
+                                }
+                            }
+                        },
+                        {
+                            "begin": ":",
+                            "beginCaptures": {
+                                "0": {
+                                    "name": "punctuation.separator.colon.sdsl"
+                                }
+                            },
+                            "end": "(?=\\{)",
+                            "patterns": [
+                                {
+                                    "include": "#type"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "begin": "\\{",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.open.sdsl"
+                        }
+                    },
+                    "end": "\\}",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.curlybrace.close.sdsl"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#preprocessor"
+                        },
+                        {
+                            "include": "#comment"
+                        },
+                        {
+                            "include": "#attribute-section"
+                        },
+                        {
+                            "include": "#punctuation-comma"
+                        },
+                        {
+                            "begin": "@?[_[:alpha:]][_[:alnum:]]*",
+                            "beginCaptures": {
+                                "0": {
+                                    "name": "entity.name.variable.enum-member.sdsl"
+                                }
+                            },
+                            "end": "(?=(,|\\}))",
+                            "patterns": [
+                                {
+                                    "include": "#comment"
+                                },
+                                {
+                                    "include": "#variable-initializer"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "include": "#preprocessor"
+                },
+                {
+                    "include": "#comment"
+                }
+            ]
+        },
+
+		"shader-members": {
+            "patterns": [
+                {
+                    "include": "#preprocessor"
+                },
+                {
+                    "include": "#comment"
+                }
+            ]
+        },
+
+
+		"comment": {
+            "patterns": [
+                {
+                    "name": "comment.block.sdsl",
+                    "begin": "/\\*",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.sdsl"
+                        }
+                    },
+                    "end": "\\*/",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.sdsl"
+                        }
+                    }
+                },
+                {
+                    "begin": "(^\\s+)?(?=//)",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.whitespace.comment.leading.sdsl"
+                        }
+                    },
+                    "end": "(?=$)",
+                    "patterns": [
+                        {
+                            "name": "comment.block.documentation.sdsl",
+                            "begin": "(?<!/)///(?!/)",
+                            "beginCaptures": {
+                                "0": {
+                                    "name": "punctuation.definition.comment.sdsl"
+                                }
+                            },
+                            "end": "(?=$)",
+                            "patterns": [
+                                {
+                                    "include": "#xml-doc-comment"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "comment.line.double-slash.sdsl",
+                            "begin": "(?<!/)//(?:(?!/)|(?=//))",
+                            "beginCaptures": {
+                                "0": {
+                                    "name": "punctuation.definition.comment.sdsl"
+                                }
+                            },
+                            "end": "(?=$)"
+                        }
+                    ]
+                }
+            ]
+        },
+		"preprocessor": {
+            "name": "meta.preprocessor.sdsl",
+            "begin": "^\\s*(\\#)\\s*",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.separator.hash.sdsl"
+                }
+            },
+            "end": "(?<=$)",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "include": "#preprocessor-define-or-undef"
+                },
+                {
+                    "include": "#preprocessor-if-or-elif"
+                },
+                {
+                    "include": "#preprocessor-else-or-endif"
+                },
+                {
+                    "include": "#preprocessor-warning-or-error"
+                },
+                {
+                    "include": "#preprocessor-region"
+                },
+                {
+                    "include": "#preprocessor-endregion"
+                },
+                {
+                    "include": "#preprocessor-load"
+                },
+                {
+                    "include": "#preprocessor-r"
+                },
+                {
+                    "include": "#preprocessor-line"
+                },
+                {
+                    "include": "#preprocessor-pragma-warning"
+                },
+                {
+                    "include": "#preprocessor-pragma-checksum"
+                }
+            ]
+        },
+        "preprocessor-define-or-undef": {
+            "match": "\\b(?:(define)|(undef))\\b\\s*\\b([_[:alpha:]][_[:alnum:]]*)\\b",
+            "captures": {
+                "1": {
+                    "name": "keyword.preprocessor.define.sdsl"
+                },
+                "2": {
+                    "name": "keyword.preprocessor.undef.sdsl"
+                },
+                "3": {
+                    "name": "entity.name.variable.preprocessor.symbol.sdsl"
+                }
+            }
+        },
+        "preprocessor-if-or-elif": {
+            "begin": "\\b(?:(if)|(elif))\\b",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.preprocessor.if.sdsl"
+                },
+                "2": {
+                    "name": "keyword.preprocessor.elif.sdsl"
+                }
+            },
+            "end": "(?=$)",
+            "patterns": [
+                {
+                    "include": "#preprocessor-expression"
+                },
+                {
+                    "include": "#comment"
+                }
+            ]
+        },
+        "preprocessor-else-or-endif": {
+            "match": "\\b(?:(else)|(endif))\\b",
+            "captures": {
+                "1": {
+                    "name": "keyword.preprocessor.else.sdsl"
+                },
+                "2": {
+                    "name": "keyword.preprocessor.endif.sdsl"
+                }
+            }
+        },
+        "preprocessor-warning-or-error": {
+            "match": "\\b(?:(warning)|(error))\\b\\s*(.*)(?=$)",
+            "captures": {
+                "1": {
+                    "name": "keyword.preprocessor.warning.sdsl"
+                },
+                "2": {
+                    "name": "keyword.preprocessor.error.sdsl"
+                },
+                "3": {
+                    "name": "string.unquoted.preprocessor.message.sdsl"
+                }
+            }
+        },
+        "preprocessor-region": {
+            "match": "\\b(region)\\b\\s*(.*)(?=$)",
+            "captures": {
+                "1": {
+                    "name": "keyword.preprocessor.region.sdsl"
+                },
+                "2": {
+                    "name": "string.unquoted.preprocessor.message.sdsl"
+                }
+            }
+        },
+        "preprocessor-endregion": {
+            "match": "\\b(endregion)\\b",
+            "captures": {
+                "1": {
+                    "name": "keyword.preprocessor.endregion.sdsl"
+                }
+            }
+        },
+        "preprocessor-line": {
+            "begin": "\\b(line)\\b",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.preprocessor.line.sdsl"
+                }
+            },
+            "end": "(?=$)",
+            "patterns": [
+                {
+                    "match": "\\b(?:(default|hidden))",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.preprocessor.default.sdsl"
+                        },
+                        "2": {
+                            "name": "keyword.preprocessor.hidden.sdsl"
+                        }
+                    }
+                },
+                {
+                    "match": "[0-9]+",
+                    "captures": {
+                        "0": {
+                            "name": "constant.numeric.decimal.sdsl"
+                        }
+                    }
+                },
+                {
+                    "match": "\\\"[^\"]*\\\"",
+                    "captures": {
+                        "0": {
+                            "name": "string.quoted.double.sdsl"
+                        }
+                    }
+                }
+            ]
+        },
+        "preprocessor-expression": {
+            "patterns": [
+                {
+                    "begin": "\\(",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.parenthesis.open.sdsl"
+                        }
+                    },
+                    "end": "\\)",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.parenthesis.close.sdsl"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#preprocessor-expression"
+                        }
+                    ]
+                },
+                {
+                    "match": "\\b(?:(true)|(false)|([_[:alpha:]][_[:alnum:]]*))\\b",
+                    "captures": {
+                        "1": {
+                            "name": "constant.language.boolean.true.sdsl"
+                        },
+                        "2": {
+                            "name": "constant.language.boolean.false.sdsl"
+                        },
+                        "3": {
+                            "name": "entity.name.variable.preprocessor.symbol.sdsl"
+                        }
+                    }
+                },
+                {
+                    "match": "(==|!=)|(\\!|&&|\\|\\|)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.operator.comparison.sdsl"
+                        },
+                        "2": {
+                            "name": "keyword.operator.logical.sdsl"
+                        }
+                    }
+                }
+            ]
+        },
+
+		"attribute-section": {
+            "begin": "(\\[)(assembly|module|field|event|method|param|property|return|type)?(\\:)?",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.squarebracket.open.sdsl"
+                },
+                "2": {
+                    "name": "keyword.other.attribute-specifier.sdsl"
+                },
+                "3": {
+                    "name": "punctuation.separator.colon.sdsl"
+                }
+            },
+            "end": "(\\])",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.squarebracket.close.sdsl"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "include": "#attribute"
+                },
+                {
+                    "include": "#punctuation-comma"
+                }
+            ]
+        },
+
+		
+		"type-array-suffix": {
+            "begin": "\\[",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.squarebracket.open.sdsl"
+                }
+            },
+            "end": "\\]",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.squarebracket.close.sdsl"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#punctuation-comma"
+                }
+            ]
+        },
+		"operator-assignment": {
+            "name": "keyword.operator.assignment.sdsl",
+            "match": "(?<!=|!)(=)(?!=)"
+        },
+        "punctuation-comma": {
+            "name": "punctuation.separator.comma.sdsl",
+            "match": ","
+        },
+		"punctuation-semicolon": {
+            "name": "punctuation.terminator.statement.sdsl",
+            "match": ";"
+        },
+		"punctuation-accessor": {
+            "name": "punctuation.accessor.sdsl",
+            "match": "\\."
+        }
 	},
 	"scopeName": "source.sdsl"
 }
