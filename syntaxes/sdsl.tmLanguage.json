@@ -6,7 +6,7 @@
             "include": "#preprocessor"
         },
 		{
-			"include": "#declarations"
+			"include": "#field-declaration"
 		},
 		{
             "include": "#comment"
@@ -104,7 +104,7 @@
 
 		"shader-declaration": {
             "begin": "(?=\\bshader\\b)",
-            "end": "(?<=\\})|(?=;)",
+            "end": "(?<=\\})",
             "patterns": [
                 {
                     "begin": "(?x)\n\\b(shader)\\b\\s+\n(@?[_[:alpha:]][_[:alnum:]]*)\\s*",
@@ -117,22 +117,13 @@
                             "name": "entity.name.type.shader.sdsl"
                         }
                     },
-                    "end": "(?=\\{)|(?=;)",
+                    "end": "(?=\\{)",
                     "patterns": [
                         {
                             "include": "#comment"
                         },
                         {
-                            "include": "#type-parameter-list"
-                        },
-                        {
-                            "include": "#parenthesized-parameter-list"
-                        },
-                        {
                             "include": "#base-types"
-                        },
-                        {
-                            "include": "#generic-constraints"
                         }
                     ]
                 },
@@ -151,7 +142,7 @@
                     },
                     "patterns": [
                         {
-                            "include": "#shader-or-struct-members"
+                            "include": "#shader-members"
                         }
                     ]
                 },
@@ -322,8 +313,127 @@
                 },
                 {
                     "include": "#comment"
+                },
+                {
+                    "include": "#field-declaration"
                 }
             ]
+        },
+
+		"field-declaration": {
+            "begin": "(?x)([a-zA-Z]+)?\\s+([_[a-zA-Z]][a-zA-Z0-9]*)\\s+([_[:alpha:]][:alnum:]*)",
+            "beginCaptures": {
+                "0" : {
+                    "patterns": [
+                        {
+                            "include": "#storage-modifier"
+                        }
+                    ]
+                },
+                "1" : {
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        }
+                    ]
+                },
+                "2" : {
+                    "name" : "entity.name.variable.sdsl"
+                }
+            },
+            "end" : "(?=;)",
+            "name" :"field.declaration.sdsl"
+        },
+
+		"base-types": {
+            "begin": ":",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.separator.colon.sdsl"
+                }
+            },
+            "end": "(?=\\{)",
+            "patterns": [
+                {
+                    "include": "#type"
+                },
+                {
+                    "include": "#punctuation-comma"
+                },
+                {
+                    "include": "#preprocessor"
+                }
+            ]
+        },
+
+		"type": {
+            "name": "meta.type.sdsl",
+            "patterns": [
+                {
+                    "include": "#comment"
+                },
+                {
+                    "include": "#type-builtin"
+                },
+                {
+                    "include": "#type-name"
+                },
+                {
+                    "include": "#type-arguments"
+                },
+                {
+                    "include": "#type-array-suffix"
+                }
+            ]
+        },
+        "type-name": {
+            "patterns": [
+                {
+                    "match": "(@?[_[:alpha:]][_[:alnum:]]*)\\s*(\\:\\:)",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.type.alias.sdsl"
+                        },
+                        "2": {
+                            "name": "punctuation.separator.coloncolon.sdsl"
+                        }
+                    }
+                },
+                {
+                    "match": "(@?[_[:alpha:]][_[:alnum:]]*)\\s*(\\.)",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.type.sdsl"
+                        },
+                        "2": {
+                            "name": "punctuation.accessor.sdsl"
+                        }
+                    }
+                },
+                {
+                    "match": "(\\.)\\s*(@?[_[:alpha:]][_[:alnum:]]*)",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.accessor.sdsl"
+                        },
+                        "2": {
+                            "name": "entity.name.type.sdsl"
+                        }
+                    }
+                },
+                {
+                    "name": "entity.name.type.sdsl",
+                    "match": "@?[_[:alpha:]][_[:alnum:]]*"
+                }
+            ]
+        },
+		"type-builtin": {
+            "match": "\\b((bool|s?byte|u?short|u?int|u?long|float|double)([2-4]?|([2-4]x[2-4])?)|void)\\b",
+            "captures": {
+                "1": {
+                    "name": "keyword.type.sdsl"
+                }
+            }
         },
 
 
@@ -626,7 +736,10 @@
                 }
             ]
         },
-
+        "storage-modifier": {
+            "name": "storage.modifier.sdsl",
+            "match": "(?<!\\.)\\b(clone|virtual|abstract|stage|stream|override|static)\\b"
+        },
 		
 		"type-array-suffix": {
             "begin": "\\[",
