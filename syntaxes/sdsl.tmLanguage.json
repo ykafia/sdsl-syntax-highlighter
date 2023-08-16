@@ -20,9 +20,6 @@
                 },
                 {
                     "include": "#punctuation-semicolon"
-                },
-                {
-                    "include": "#mixin-name-generics-values"
                 }
             ]
         },
@@ -219,8 +216,51 @@
             ],
             "name": "declaration.shader.sdsl"
         },
+        "shader-members": {
+            "name": "shader.members.sdsl",
+            "patterns": [
+                {
+                    "include": "#preprocessor"
+                },
+                {
+                    "name": "shader.member.comment",
+                    "include": "#comment"
+                },
+                {
+                    "include": "#field-declaration",
+                    "name": "shader.member.field.declaration"
+                },
+                {
+                    "include": "#method-declaration"
+                }
+            ]
+        },
+        "method-declaration" : {
+            "name" : "declaration.shader.method.sdsl",
+            "begin": "(([[:alpha:]]+)\\s+)?([_[:alpha:]][_[:alnum:]]*)\\s+([_[:alpha:]][_[:alnum:]]*)\\s*\\()",
+            "beginCaptures": {
+                "2": {
+                    "patterns": [
+                        {
+                            "include": "#storage-modifier"
+                        }
+                    ]
+                },
+                "3": {
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        }
+                    ]
+                },
+                "4": {
+                    "name": "entity.name.method.sdsl"
+                }
+            },
+            "end": "(?=\\s*(\\})|(\\)\\s*;))"
+        },
         "field-declaration": {
-            "begin": "(([[:alpha:]]+)\\s+)?([_[:alpha:]][_[:alnum:]]*)\\s+([_[:alpha:]][_[:alnum:]]*)\\s*",
+            "begin": "(([[:alpha:]]+)\\s+)?([_[:alpha:]][_[:alnum:]]*)\\s+([_[:alpha:]][_[:alnum:]]*)\\s*(?>!\\()",
             "beginCaptures": {
                 "2": {
                     "patterns": [
@@ -394,22 +434,7 @@
                 }
             ]
         },
-        "shader-members": {
-            "name": "shader.members.sdsl",
-            "patterns": [
-                {
-                    "include": "#preprocessor"
-                },
-                {
-                    "name": "shader.member.comment",
-                    "include": "#comment"
-                },
-                {
-                    "include": "#field-declaration",
-                    "name": "shader.member.field.declaration"
-                }
-            ]
-        },
+        
         "base-types": {
             "name": "entity.other.inherited-class",
             "patterns": [
