@@ -3,13 +3,7 @@
 	"name": "SDSL",
 	"patterns": [
         {
-            "include": "#preprocessor"
-        },
-		{
-			"include": "#field-declaration"
-		},
-		{
-            "include": "#comment"
+            "include": "#declarations"
         }
     ],
 	
@@ -22,10 +16,13 @@
                     "include": "#namespace-declaration"
                 },
                 {
-                    "include": "#type-declarations"
+                    "include": "#shader-declaration2"
                 },
                 {
                     "include": "#punctuation-semicolon"
+                },
+                {
+                    "include": "#mixin-name-generics-values"
                 }
             ]
         },
@@ -107,7 +104,7 @@
             "end": "(?<=\\})",
             "patterns": [
                 {
-                    "begin": "(?x)\n\\b(shader)\\b\\s+\n(@?[_[:alpha:]][_[:alnum:]]*)\\s*",
+                    "begin": "(shader)\\s+([_[:alpha:]][_[:alnum:]]*)(\\s*(\\<(.*|\\s*)*\\>))?\\s*",
                     "beginCaptures": {
                         
                         "1": {
@@ -115,26 +112,31 @@
                         },
                         "2": {
                             "name": "entity.name.type.shader.sdsl"
+                        },
+                        "3": {
+                            "patterns": [{"include": "#mixin-generics-declaration"}]
                         }
                     },
-                    "end": "(?=\\{)",
+                    "end": "(?=(:|\\{))"
+                },
+                {
+                    "name": "inherited.mixins.sdsl",
+                    "begin": ":",
+                    "end": "{",
                     "patterns": [
-                        {
-                            "include": "#comment"
-                        },
                         {
                             "include": "#base-types"
                         }
                     ]
                 },
                 {
-                    "begin": "\\{",
+                    "begin": "(?=\\{)",
                     "beginCaptures": {
                         "0": {
                             "name": "punctuation.curlybrace.open.sdsl"
                         }
                     },
-                    "end": "\\}",
+                    "end": "(?<=\\})",
                     "endCaptures": {
                         "0": {
                             "name": "punctuation.curlybrace.close.sdsl"
@@ -153,6 +155,146 @@
                     "include": "#comment"
                 }
             ]
+        },
+
+        "shader-declaration2" : {
+            "begin": "(?=\\bshader\\b)",
+            "end": "(?<=\\})",
+            "beginCaptures": {
+                "1" : {"name" : "keyword.other.shader.sdsl"}
+            },
+            "patterns": [
+                {
+                    "patterns": [
+                        {
+                            "begin": "(shader)\\s*([_[:alpha:]][_[:alnum:]]*)",
+                            "end": "(?=(\\<|:|\\{))",
+                            "beginCaptures": {
+                                "1" : {"name" : "keyword.other.shader.sdsl"},
+                                "2" : {"name" : "entity.name.class.shader.sdsl"}
+                            }
+                        },
+                        {
+                            "name" : "declaration.shader.generics.sdsl",
+                            "begin": "\\<",
+                            "end": "(?<=\\>)",
+                            "patterns": [
+                                {
+                                    "include": "#punctuation.comma"
+                                },
+                                {
+                                    "match": "([[:alnum:]]+)\\s+([_[:alpha:]][_[:alnum:]]*)",
+                                    "captures": {
+                                        "1" : {
+                                            "patterns": [
+                                                {"include": "#type-builtin"}
+                                            ]
+                                        },
+                                        "2" : {
+                                            "name" : "variable.name.mixin.generics.sdsl"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name" : "declaration.shader.inherit.sdsl",
+                            "begin": "(?<=:)",
+                            "end": "(?=\\{)",
+                            "patterns": [
+                                {
+                                    "include": "#punctuation.comma"
+                                },
+                                {
+                                    "match": "([_[:alpha:]][_[:alnum:]]*)(?!\\<)",
+                                    "captures": {
+                                        "1" : {
+                                            "patterns": [
+                                                {"include": "#type"}
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    "begin": "([_[:alpha:]][_[:alnum:]]*)(?=\\<)",
+                                    "beginCaptures": {
+                                        "1" : {
+                                            "patterns": [
+                                                {"include": "#type"}
+                                            ]
+                                        }
+                                    },
+                                    "end": "(?<=\\>)",
+                                    "patterns": [
+                                        {
+                                            "include": "#number"
+                                        },
+                                        {
+                                            "name" : "keyword.other",
+                                            "match": "(true|false)"
+                                        },
+                                        {
+                                            "include": "#punctuation.comma"
+                                        },
+                                        {
+                                            "include": "#builtin-constructor"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                
+                {
+                    "begin": "(?=\\{)",
+                    "end": "(?<=\\})",
+                    "name" : "declaration.shader.body",
+                    "patterns": [
+                        {
+                            "include": "#field-declaration"
+                        }
+                    ]
+                }
+            ],
+            
+            "name" : "declaration.shader.sdsl"
+        },
+
+        "shader-declaration-body" : {
+            "name" : "body.sdsl",
+            "begin": "(?<=\\{)",
+            "end": "(?<=\\})",
+            "patterns": [
+                {
+                    "include": "#shader-members"
+                }
+            ]
+            
+        },
+        "field-declaration": {
+            "begin": "(([[:alpha:]]+)\\s+)?([_[:alpha:]][_[:alnum:]]*)\\s+([_[:alpha:]][_[:alnum:]]*)\\s*",
+            "beginCaptures": {
+                "2" : {
+                    "patterns": [
+                        {
+                            "include": "#storage-modifier"
+                        }
+                    ]
+                },
+                "3" : {
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        }
+                    ]
+                },
+                "4" : {
+                    "name" : "entity.name.variable.sdsl"
+                }
+            },
+            "end" : "(?=\\s*;)",
+            "name" :"field.declaration.sdsl"
         },
 		"struct-declaration": {
             "begin": "\\bstruct\\b)",
@@ -307,55 +449,32 @@
         },
 
 		"shader-members": {
+            "name" : "shader.members.sdsl",
             "patterns": [
                 {
                     "include": "#preprocessor"
                 },
                 {
+                    "name" : "shader.member.comment",
                     "include": "#comment"
                 },
                 {
-                    "include": "#field-declaration"
+                    "include": "#field-declaration",
+                    "name" : "shader.member.field.declaration"
                 }
             ]
         },
 
-		"field-declaration": {
-            "begin": "(?x)([a-zA-Z]+)?\\s+([_[a-zA-Z]][a-zA-Z0-9]*)\\s+([_[:alpha:]][:alnum:]*)",
-            "beginCaptures": {
-                "0" : {
-                    "patterns": [
-                        {
-                            "include": "#storage-modifier"
-                        }
-                    ]
-                },
-                "1" : {
-                    "patterns": [
-                        {
-                            "include": "#type"
-                        }
-                    ]
-                },
-                "2" : {
-                    "name" : "entity.name.variable.sdsl"
-                }
-            },
-            "end" : "(?=;)",
-            "name" :"field.declaration.sdsl"
-        },
+		
 
 		"base-types": {
-            "begin": ":",
-            "beginCaptures": {
-                "0": {
-                    "name": "punctuation.separator.colon.sdsl"
-                }
-            },
-            "end": "(?=\\{)",
+            "name" : "entity.other.inherited-class",
             "patterns": [
                 {
                     "include": "#type"
+                },
+                {
+                    "include": "#mixin-name-generics-values"
                 },
                 {
                     "include": "#punctuation-comma"
@@ -377,12 +496,89 @@
                 },
                 {
                     "include": "#type-name"
+                }
+            ]
+        },
+
+        "mixin-name-generics-declaration" : {
+            "name" : "mixin.name.generics.declaration.sdsl",
+            "begin": "([_[:alpha:]][_[:alnum:]*])\\s*\\<",
+            "end": "(?<=\\>)",
+            "beginCaptures": {
+                "1" : {
+                    "name" : "entity.name.type.sdsl"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#mixin-generics-declaration"
+                }
+            ]
+        },
+
+        "mixin-name-generics-values" : {
+            "name" : "mixin.name.generics.value.sdsl",
+            "begin": "([_[:alpha:]][_[:alnum:]]*)\\s*(\\<)",
+            "end": "(\\>)",
+            "beginCaptures": {
+                "1" : {
+                    "name" : "entity.name.type.sdsl"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#number"
                 },
                 {
-                    "include": "#type-arguments"
+                    "name" : "keyword.other",
+                    "match": "(true|false)"
                 },
                 {
-                    "include": "#type-array-suffix"
+                    "include": "#punctuation.comma"
+                },
+                {
+                    "include": "#builtin-constructor"
+                }
+            ]
+        },
+
+        "mixin-generics" : {
+            "begin": "\\<",
+            "end": "(?<=\\>)",
+            "patterns": [
+                {
+                    "include": "#number"
+                },
+                {
+                    "name" : "keyword.other",
+                    "match": "(true|false)"
+                },
+                {
+                    "include": "#punctuation.comma"
+                },
+                {
+                    "include": "#builtin-constructor"
+                }
+            ]
+        },
+        "mixin-generics-declaration" : {
+            "name" : "mixin.generics.declaration.sdsl",
+            "patterns": [
+                {
+                    "include": "#punctuation.comma"
+                },
+                {
+                    "match": "([[:alnum:]]+)\\s+([_[:alpha:]][_[:alnum:]]*)",
+                    "captures": {
+                        "1" : {
+                            "patterns": [
+                                {"include": "#type-builtin"}
+                            ]
+                        },
+                        "2" : {
+                            "name" : "variable.name.mixin.generics.sdsl"
+                        }
+                    }
                 }
             ]
         },
@@ -738,7 +934,35 @@
         },
         "storage-modifier": {
             "name": "storage.modifier.sdsl",
-            "match": "(?<!\\.)\\b(clone|virtual|abstract|stage|stream|override|static)\\b"
+            "match": "(?<!\\.)\\b(clone|virtual|abstract|stage|stream|override|static|compose)\\b"
+        },
+
+        "builtin-constructor" : {
+            "name" : "builtin.constructor.sdsl",
+            "begin": "([[:alnum:]]+)\\s*\\(",
+            "end": "(?=\\))",
+            "beginCaptures": {
+                "1" : {
+                    "name" : "builtin.constructor.type.sdsl",
+                    "patterns": [
+                        {"include": "#type-builtin"}
+                    ]
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#punctuation.comma"
+                },
+                {
+                    "include": "#number",
+                    "name" : "builtin.constructor.value"
+                }
+            ]
+        },
+
+        "number" : {
+            "name" : "constant.numeric.sdsl",
+            "match": "([1-9][0-9]*|0)(.[0-9])?(F|L|U)?"
         },
 		
 		"type-array-suffix": {
