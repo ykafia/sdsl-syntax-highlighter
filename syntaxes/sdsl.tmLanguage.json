@@ -902,16 +902,10 @@
         },
 
 		"attribute-section": {
-            "begin": "(\\[)(assembly|module|field|event|method|param|property|return|type)?(\\:)?",
+            "begin": "(\\[)",
             "beginCaptures": {
                 "1": {
                     "name": "punctuation.squarebracket.open.sdsl"
-                },
-                "2": {
-                    "name": "keyword.other.attribute-specifier.sdsl"
-                },
-                "3": {
-                    "name": "punctuation.separator.colon.sdsl"
                 }
             },
             "end": "(\\])",
