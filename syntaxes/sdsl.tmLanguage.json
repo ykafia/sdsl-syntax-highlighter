@@ -236,7 +236,6 @@
                 }
             ]
         },
-        
         "field-declaration": {
             "match": "(([[:alpha:]]+)\\s+)?(([[:alpha:]]+)\\s+)?([[:alnum:]]+)\\s+([_[:alpha:]][_[:alnum:]]*)\\s*(?:;)",
             "captures": {
@@ -262,7 +261,7 @@
                     ]
                 },
                 "6": {
-                    "name": "entity.name.variable.sdsl"
+                    "name": "variable.name.sdsl"
                 }
             },
             "name": "field.declaration.sdsl"
@@ -418,8 +417,8 @@
                 }
             ]
         },
-        "method-declaration" : {
-            "name" : "declaration.shader.method.sdsl",
+        "method-declaration": {
+            "name": "declaration.shader.method.sdsl",
             "begin": "(([[:alpha:]]+)\\s+)?(([[:alpha:]]+)\\s+)?([[:alnum:]]+)\\s+([_[:alpha:]][_[:alnum:]]*)(?:(?!\\()\\s)*",
             "end": "(?:(}|(\\)\\s*;)))",
             "beginCaptures": {
@@ -445,33 +444,82 @@
                     ]
                 },
                 "6": {
-                    "name": "entity.name.method"
+                    "name": "entity.name.function"
                 }
             },
             "patterns": [
                 {
-                    "name" : "declaration.shader.method.parameters",
+                    "name": "declaration.shader.method.parameters",
                     "begin": "\\(",
                     "end": "\\)",
                     "patterns": [
-                        {"include": "#parameters-declaration"}
+                        {
+                            "include": "#parameters-declaration"
+                        }
                     ]
                 },
                 {
-                    "name" : "declaration.shader.method.body",
+                    "name": "declaration.shader.method.body.sdsl",
                     "begin": "(?={)",
                     "end": "(?=})",
                     "patterns": [
-                        {"include": "#statements"}
+                        {
+                            "include": "#statements"
+                        }
                     ]
                 }
             ]
         },
-
-        "statements" : {
-
+        "statements": {
+            "patterns": [
+                {
+                    "include": "#assign-statement"
+                }
+            ]
         },
-        
+        "assign-statement": {
+            "name" : "declaration.statement.sdsl",
+            "begin": "(var)\\s+([_[:alpha:]][_[:alnum:]]*)\\s*((?:(?!;).)*)",
+            "end": "(?=;)",
+            "beginCaptures": {
+                "1": {
+                    "name": "declaration.statement.variable.type.sdsl",
+                    "patterns": [
+                        {
+                            "match": "var",
+                            "name" : "keyword.other.var.sdsl"
+                        },
+                        {
+                            "include": "#type"
+                        }
+                    ]
+                },
+                "2": {
+                    "name": "variable.name.statement.declaration.sdsl"
+                },
+                "3" :{
+                    "patterns": [
+                        {
+                            "name" : "assign-operation",
+                            "begin": "([+-/\\*\\|&\\^]?=)(?:([_[:alnum:]]|\\s))",
+                            "end": "(?=;)",
+                            "beginCaptures": {
+                                "1" : {
+                                    "patterns": [
+                                        {"include": "#operator-assignment"}
+                                    ]
+                                }
+                            },
+                            "patterns": [
+                                {"include": "#method-call"},
+                                {"include": "#number"}
+
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
         "base-types": {
             "name": "entity.other.inherited-class",
             "patterns": [
@@ -546,6 +594,24 @@
         "mixin-generics": {
             "begin": "\\<",
             "end": "(?<=\\>)",
+            "patterns": [
+                {
+                    "include": "#number"
+                },
+                {
+                    "name": "keyword.other",
+                    "match": "(true|false)"
+                },
+                {
+                    "include": "#punctuation.comma"
+                },
+                {
+                    "include": "#builtin-constructor"
+                }
+            ]
+        },
+        "parameters-values" :{
+            "name" : "paramters.values.sdsl",
             "patterns": [
                 {
                     "include": "#number"
@@ -953,6 +1019,10 @@
             "name": "storage.modifier.sdsl",
             "match": "(?<!\\.)\\b(clone|virtual|abstract|stage|stream|override|static|compose)\\b"
         },
+        "control-flow": {
+            "name": "keyword.control",
+            "match": "(if|else|for|foreach|return|break|continue|pass)"
+        },
         "builtin-constructor": {
             "name": "builtin.constructor.sdsl",
             "begin": "([[:alnum:]]+)\\s*\\(",
@@ -975,6 +1045,16 @@
                     "include": "#number",
                     "name": "builtin.constructor.value"
                 }
+            ]
+        },
+        "method-call" : {
+            "begin": "([_[:alpha:]][_[:alnum:]]*)\\s*\\(",
+            "end": "(?=\\))",
+            "beginCaptures": {
+                "1" : {"name" : "entity.name.function"}
+            },
+            "patterns": [
+                {"include": "#parameters-values"}
             ]
         },
         "number": {
