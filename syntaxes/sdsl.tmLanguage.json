@@ -231,13 +231,15 @@
                     "name": "shader.member.field.declaration"
                 },
                 {
-                    "include": "#method-declaration"
+                    "include": "#method-declaration",
+                    "name": "shader.member.method.declaration"
                 }
             ]
         },
         "method-declaration" : {
             "name" : "declaration.shader.method.sdsl",
-            "begin": "(([[:alpha:]]+)\\s+)?([_[:alpha:]][_[:alnum:]]*)\\s+([_[:alpha:]][_[:alnum:]]*)\\s*\\()",
+            "begin": "(([[:alpha:]]+)\\s+)?(([[:alpha:]]+)\\s+)?([[:alnum:]]+)\\s+([_[:alpha:]][_[:alnum:]]*)(?:(?!\\()\\s)*",
+            "end": "(?:(}|(\\)\\s*;)))",
             "beginCaptures": {
                 "2": {
                     "patterns": [
@@ -246,22 +248,38 @@
                         }
                     ]
                 },
-                "3": {
+                "4": {
+                    "patterns": [
+                        {
+                            "include": "#storage-modifier"
+                        }
+                    ]
+                },
+                "5": {
                     "patterns": [
                         {
                             "include": "#type"
                         }
                     ]
                 },
-                "4": {
-                    "name": "entity.name.method.sdsl"
+                "6": {
+                    "name": "entity.name.method"
                 }
             },
-            "end": "(?=\\s*(\\})|(\\)\\s*;))"
+            "patterns": [
+                {
+                    "name" : "parameter",
+                    "begin": "\\(",
+                    "end": "\\)",
+                    "patterns": [
+                        {"include": "#parameters-declaration"}
+                    ]
+                }
+            ]
         },
         "field-declaration": {
-            "begin": "(([[:alpha:]]+)\\s+)?([_[:alpha:]][_[:alnum:]]*)\\s+([_[:alpha:]][_[:alnum:]]*)\\s*(?>!\\()",
-            "beginCaptures": {
+            "match": "(([[:alpha:]]+)\\s+)?(([[:alpha:]]+)\\s+)?([[:alnum:]]+)\\s+([_[:alpha:]][_[:alnum:]]*)\\s*(?:;)",
+            "captures": {
                 "2": {
                     "patterns": [
                         {
@@ -269,18 +287,24 @@
                         }
                     ]
                 },
-                "3": {
+                "4": {
+                    "patterns": [
+                        {
+                            "include": "#storage-modifier"
+                        }
+                    ]
+                },
+                "5": {
                     "patterns": [
                         {
                             "include": "#type"
                         }
                     ]
                 },
-                "4": {
+                "6": {
                     "name": "entity.name.variable.sdsl"
                 }
             },
-            "end": "(?=\\s*;)",
             "name": "field.declaration.sdsl"
         },
         "struct-declaration": {
@@ -477,7 +501,7 @@
             },
             "patterns": [
                 {
-                    "include": "#mixin-generics-declaration"
+                    "include": "#parameters-declaration"
                 }
             ]
         },
@@ -522,6 +546,29 @@
                 },
                 {
                     "include": "#builtin-constructor"
+                }
+            ]
+        },
+        "parameters-declaration": {
+            "name": "parameters.declaration.sdsl",
+            "patterns": [
+                {
+                    "include": "#punctuation.comma"
+                },
+                {
+                    "match": "([[:alnum:]]+)\\s+([_[:alpha:]][_[:alnum:]]*)",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "include": "#type-builtin"
+                                }
+                            ]
+                        },
+                        "2": {
+                            "name": "variable.name.mixin.generics.sdsl"
+                        }
+                    }
                 }
             ]
         },
