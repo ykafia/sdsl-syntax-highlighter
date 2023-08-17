@@ -236,47 +236,7 @@
                 }
             ]
         },
-        "method-declaration" : {
-            "name" : "declaration.shader.method.sdsl",
-            "begin": "(([[:alpha:]]+)\\s+)?(([[:alpha:]]+)\\s+)?([[:alnum:]]+)\\s+([_[:alpha:]][_[:alnum:]]*)(?:(?!\\()\\s)*",
-            "end": "(?:(}|(\\)\\s*;)))",
-            "beginCaptures": {
-                "2": {
-                    "patterns": [
-                        {
-                            "include": "#storage-modifier"
-                        }
-                    ]
-                },
-                "4": {
-                    "patterns": [
-                        {
-                            "include": "#storage-modifier"
-                        }
-                    ]
-                },
-                "5": {
-                    "patterns": [
-                        {
-                            "include": "#type"
-                        }
-                    ]
-                },
-                "6": {
-                    "name": "entity.name.method"
-                }
-            },
-            "patterns": [
-                {
-                    "name" : "parameter",
-                    "begin": "\\(",
-                    "end": "\\)",
-                    "patterns": [
-                        {"include": "#parameters-declaration"}
-                    ]
-                }
-            ]
-        },
+        
         "field-declaration": {
             "match": "(([[:alpha:]]+)\\s+)?(([[:alpha:]]+)\\s+)?([[:alnum:]]+)\\s+([_[:alpha:]][_[:alnum:]]*)\\s*(?:;)",
             "captures": {
@@ -457,6 +417,59 @@
                     "include": "#comment"
                 }
             ]
+        },
+        "method-declaration" : {
+            "name" : "declaration.shader.method.sdsl",
+            "begin": "(([[:alpha:]]+)\\s+)?(([[:alpha:]]+)\\s+)?([[:alnum:]]+)\\s+([_[:alpha:]][_[:alnum:]]*)(?:(?!\\()\\s)*",
+            "end": "(?:(}|(\\)\\s*;)))",
+            "beginCaptures": {
+                "2": {
+                    "patterns": [
+                        {
+                            "include": "#storage-modifier"
+                        }
+                    ]
+                },
+                "4": {
+                    "patterns": [
+                        {
+                            "include": "#storage-modifier"
+                        }
+                    ]
+                },
+                "5": {
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        }
+                    ]
+                },
+                "6": {
+                    "name": "entity.name.method"
+                }
+            },
+            "patterns": [
+                {
+                    "name" : "declaration.shader.method.parameters",
+                    "begin": "\\(",
+                    "end": "\\)",
+                    "patterns": [
+                        {"include": "#parameters-declaration"}
+                    ]
+                },
+                {
+                    "name" : "declaration.shader.method.body",
+                    "begin": "(?={)",
+                    "end": "(?=})",
+                    "patterns": [
+                        {"include": "#statements"}
+                    ]
+                }
+            ]
+        },
+
+        "statements" : {
+
         },
         
         "base-types": {
