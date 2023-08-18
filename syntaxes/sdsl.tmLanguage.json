@@ -6,7 +6,7 @@
             "include": "#declarations"
         },
         {
-            "include": "#preprocessor"
+            "include": "#preprocessors"
         }
     ],
     "repository": {
@@ -476,7 +476,13 @@
                     "include": "#foreach"
                 },
                 {
+                    "include": "#for"
+                },
+                {
                     "include": "#while"
+                },
+                {
+                    "include": "#return"
                 },
                 {
                     "include": "#method-call"
@@ -485,36 +491,120 @@
                     "include": "#number"
                 },
                 {
+                    "include": "#booleans"
+                },
+                {
                     "include": "#declare"
+                },
+                {
+                    "include": "#block"
                 }
             ]
         },
-        "declare" : {
-            "name" : "declare",
+        "declare": {
+            "name": "declare",
             "match": "([_[:alpha:]][_[:alnum:]]*)\\s+([_[:alpha:]][_[:alnum:]]*)",
             "captures": {
-                "1" : {"patterns": [{"include": "#type"}]},
-                "2" : {"name": "variable.name.sdsl"}
+                "1": {
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        }
+                    ]
+                },
+                "2": {
+                    "name": "variable.name.sdsl"
+                }
             }
         },
-        "foreach" : {
-            "name" : "foreach",
-            "match": "(foreach)\\s*\\(\\s*([_[:alpha:]][_[:alnum:]]*)\\s+([_[:alpha:]][_[:alnum:]]*)\\s+(in)\\s+([_[:alpha:]][_[:alnum:]]*)\\)",
-            "captures": {
-                "1" : {"name" : "keyword.control.foreach"},
-                "2" : {"patterns": [{"include": "#type"}]},
-                "3" : {"name": "variable.name.sdsl"},
-                "4" : {"name" : "keyword.control.in"},
-                "5" : {"name": "variable.name.sdsl"}
-
-            }
+        "block": {
+            "name": "block",
+            "begin": "(?:{)",
+            "end": "(?:})",
+            "patterns": [
+                {
+                    "include": "#statements"
+                }
+            ]
         },
-        "while" : {
-            "name" : "while",
-            "begin": "(while)",
+        "return" : {
+            "name": "return",
+            "begin": "(return)\\s*",
+            "end": "(?=;)",
+            "beginCaptures": {
+                "1" : {"name" : "keyword.control.return"}
+            },
+            "patterns": [
+                {"include": "#statements"}
+            ]
+        },
+        "while": {
+            "name": "while",
+            "begin": "(while)\\s*\\(",
             "end": "(?=\\))",
             "beginCaptures": {
-                "1" : {"name" : "keyword.control.while"}
+                "1": {
+                    "name": "keyword.control.while"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#statements"
+                },
+                {
+                    "name" : "variable.name.sdsl",
+                    "match": "([_[:alpha:]][_[:alnum:]]*)"
+                }
+            ]
+        },
+        "for": {
+            "name": "for",
+            "begin": "(for)\\s*\\(",
+            "end": "(?=\\))",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.control.for"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#declare"
+                },
+                {
+                    "name" : "variable.name.sdsl",
+                    "match": "([_[:alpha:]][_[:alnum:]]*)"
+                },
+                {
+                    "include": "#number"
+                },
+                {
+                    "include": "#booleans"
+                }
+            ]
+        },
+        "foreach": {
+            "name": "foreach",
+            "match": "(foreach)\\s*\\(([_[:alpha:]][_[:alnum:]]*)\\s+([_[:alpha:]][_[:alnum:]]*)\\s+(in)\\s+([_[:alpha:]][_[:alnum:]]*)\\s*\\)",
+            "captures": {
+                "1": {
+                    "name": "keyword.control.foreach"
+                },
+                "2": {
+                    "patterns": [
+                        {
+                            "include": "#type"
+                        }
+                    ]
+                },
+                "3": {
+                    "name": "variable.name.sdsl"
+                },
+                "4": {
+                    "name": "keyword.control.in"
+                },
+                "5": {
+                    "name": "variable.name.sdsl"
+                }
             }
         },
         "base-types": {
@@ -539,7 +629,7 @@
             "patterns": [
                 {
                     "match": "var",
-                    "name" : "keyword.other.var"
+                    "name": "keyword.other.var"
                 },
                 {
                     "include": "#type-builtin"
@@ -1019,7 +1109,7 @@
         },
         "control-flow": {
             "name": "keyword.control",
-            "match": "(if|else|for|foreach|return|break|continue|pass)"
+            "match": "(if|else|foreach|for|return|break|continue|pass)"
         },
         "builtin-constructor": {
             "name": "builtin.constructor.sdsl",
@@ -1065,7 +1155,7 @@
         },
         "booleans": {
             "name": "keyword.other.booleans.sdsl",
-            "match": "(true|false)?"
+            "match": "(true|false)"
         },
         "type-array-suffix": {
             "begin": "\\[",
