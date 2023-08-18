@@ -473,6 +473,12 @@
         "statements": {
             "patterns": [
                 {
+                    "include": "#foreach"
+                },
+                {
+                    "include": "#while"
+                },
+                {
                     "include": "#method-call"
                 },
                 {
@@ -484,11 +490,31 @@
             ]
         },
         "declare" : {
-            "name" : "assign",
+            "name" : "declare",
             "match": "([_[:alpha:]][_[:alnum:]]*)\\s+([_[:alpha:]][_[:alnum:]]*)",
             "captures": {
                 "1" : {"patterns": [{"include": "#type"}]},
                 "2" : {"name": "variable.name.sdsl"}
+            }
+        },
+        "foreach" : {
+            "name" : "foreach",
+            "match": "(foreach)\\s*\\(\\s*([_[:alpha:]][_[:alnum:]]*)\\s+([_[:alpha:]][_[:alnum:]]*)\\s+(in)\\s+([_[:alpha:]][_[:alnum:]]*)\\)",
+            "captures": {
+                "1" : {"name" : "keyword.control.foreach"},
+                "2" : {"patterns": [{"include": "#type"}]},
+                "3" : {"name": "variable.name.sdsl"},
+                "4" : {"name" : "keyword.control.in"},
+                "5" : {"name": "variable.name.sdsl"}
+
+            }
+        },
+        "while" : {
+            "name" : "while",
+            "begin": "(while)",
+            "end": "(?=\\))",
+            "beginCaptures": {
+                "1" : {"name" : "keyword.control.while"}
             }
         },
         "base-types": {
@@ -511,6 +537,10 @@
         "type": {
             "name": "meta.type.sdsl",
             "patterns": [
+                {
+                    "match": "var",
+                    "name" : "keyword.other.var"
+                },
                 {
                     "include": "#type-builtin"
                 },
