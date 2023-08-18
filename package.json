@@ -39,5 +39,8 @@
   "devDependencies": {
     "js-yaml": "^4.1.0"
   },
+  "repository": {
+    "url": "https://github.com/ykafia/sdsl-syntax-highlighter"
+  },
   "icon": "./logo.png"
 }
