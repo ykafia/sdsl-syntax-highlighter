@@ -42,5 +42,6 @@
   "repository": {
     "url": "https://github.com/ykafia/sdsl-syntax-highlighter"
   },
+  "publisher": "YounessKafia",
   "icon": "./logo.png"
 }
