@@ -2,10 +2,10 @@
 
 This is an extension to provide syntax highlighting for [SDSL language](https://stride3d.net).
 
-## Known Issues
+## Release notes
 
-Not yet implemented : 
+- 0.0.1
+    Initial release with basic syntax
+- 0.0.2
+    Added `rgroup` and `cbuffer` syntax
 
-- statements in methods
-- field attributes
-- and maybe others.
