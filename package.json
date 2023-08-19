@@ -2,7 +2,7 @@
   "name": "sdsl-syntax-highlighter",
   "displayName": "SDSL Syntax Highlighter",
   "description": "Syntax highlighting for SDSL",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.81.0"
   },

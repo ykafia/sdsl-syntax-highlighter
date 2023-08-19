@@ -96,7 +96,7 @@
         },
         "shader-declaration": {
             "begin": "(?=\\bshader\\b)",
-            "end": "(?<=\\})",
+            "end": "(?=})",
             "beginCaptures": {
                 "1": {
                     "name": "keyword.other.shader.sdsl"
@@ -199,7 +199,7 @@
                 },
                 {
                     "begin": "(?=\\{)",
-                    "end": "(?<=\\})",
+                    "end": "(?=})",
                     "name": "declaration.shader.body",
                     "patterns": [
                         {
@@ -225,6 +225,12 @@
                 {
                     "name": "shader.member.comment",
                     "include": "#comment"
+                },
+                {
+                    "include": "#rgroup"
+                },
+                {
+                    "include": "#cbuffer"
                 },
                 {
                     "include": "#field-declaration",
@@ -415,6 +421,29 @@
                 {
                     "include": "#comment"
                 }
+            ]
+        },
+
+        "cbuffer" :{
+            "name" : "cbuffer.sdsl",
+            "begin": "(cbuffer)\\s+([_[:alpha:]][_[:alnum:]\\.]*)\\s*{",
+            "end": "(?:})",
+            "beginCaptures": {
+                "1" : {"name" : "keyword.other.cbuffer"},
+                "2" : {"name" : "entity.name"}
+            },
+            "patterns": [
+                {"include": "#field-declaration"}
+            ]
+        },
+        "rgroup" :{
+            "begin": "(rgroup)\\s+([_[:alpha:]][_[:alnum:]\\.]*)\\s*{",
+            "end": "(?:})",
+            "beginCaptures": {
+                "1" : {"name" : "keyword.other.rgroup"}
+            },
+            "patterns": [
+                {"include": "#field-declaration"}
             ]
         },
         "method-declaration": {
