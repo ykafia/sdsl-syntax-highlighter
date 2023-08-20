@@ -7,6 +7,9 @@
         },
         {
             "include": "#preprocessors"
+        },
+        {
+            "include": "#type-buffer"
         }
     ],
     "repository": {
@@ -148,6 +151,9 @@
                             "end": "(?=\\{)",
                             "patterns": [
                                 {
+                                    "include": "#comment"
+                                },
+                                {
                                     "include": "#preprocessor"
                                 },
                                 {
@@ -243,7 +249,7 @@
             ]
         },
         "field-declaration": {
-            "match": "(([[:alpha:]]+)\\s+)?(([[:alpha:]]+)\\s+)?([[:alnum:]]+)\\s+([_[:alpha:]][_[:alnum:]]*)\\s*(?:;)",
+            "match": "(([[:alpha:]]+)\\s+)?(([[:alpha:]]+)\\s+)?([[:alnum:]\\<\\>]+)\\s+([_[:alpha:]][_[:alnum:]]*)\\s*(?:;)",
             "captures": {
                 "2": {
                     "patterns": [
@@ -423,27 +429,50 @@
                 }
             ]
         },
-
-        "cbuffer" :{
-            "name" : "cbuffer.sdsl",
+        "cbuffer": {
+            "name": "cbuffer.sdsl",
             "begin": "(cbuffer)\\s+([_[:alpha:]][_[:alnum:]\\.]*)\\s*{",
             "end": "(?:})",
             "beginCaptures": {
-                "1" : {"name" : "keyword.other.cbuffer"},
-                "2" : {"name" : "entity.name"}
+                "1": {
+                    "name": "keyword.other.cbuffer"
+                },
+                "2": {
+                    "name": "entity.name"
+                }
             },
             "patterns": [
-                {"include": "#field-declaration"}
+                {
+                    "include": "#field-declaration"
+                }
             ]
         },
-        "rgroup" :{
-            "begin": "(rgroup)\\s+([_[:alpha:]][_[:alnum:]\\.]*)\\s*{",
+        "rgroup": {
+            "name" : "rgroup.block.sdsl",
+            "begin": "(rgroup)",
             "end": "(?:})",
             "beginCaptures": {
-                "1" : {"name" : "keyword.other.rgroup"}
+                "1": {
+                    "name": "keyword.other.rgroup"
+                }
             },
             "patterns": [
-                {"include": "#field-declaration"}
+                {
+                    "name" : "rgroup.body.sdsl",
+                    "begin": "{",
+                    "end": "(?=})",
+                    "patterns": [
+                        {
+                            "include": "#field-declaration"
+                        }
+                    ]
+                },
+                {
+                    "name" : "entity.name.type.rgroup.name.sdsl",
+                    "begin": "([_[:alnum:]]*)",
+                    "end": "(?={)"
+                }
+                
             ]
         },
         "method-declaration": {
@@ -556,15 +585,19 @@
                 }
             ]
         },
-        "return" : {
+        "return": {
             "name": "return",
             "begin": "(return)\\s*",
             "end": "(?=;)",
             "beginCaptures": {
-                "1" : {"name" : "keyword.control.return"}
+                "1": {
+                    "name": "keyword.control.return"
+                }
             },
             "patterns": [
-                {"include": "#statements"}
+                {
+                    "include": "#statements"
+                }
             ]
         },
         "while": {
@@ -581,7 +614,7 @@
                     "include": "#statements"
                 },
                 {
-                    "name" : "variable.name.sdsl",
+                    "name": "variable.name.sdsl",
                     "match": "([_[:alpha:]][_[:alnum:]]*)"
                 }
             ]
@@ -600,7 +633,7 @@
                     "include": "#declare"
                 },
                 {
-                    "name" : "variable.name.sdsl",
+                    "name": "variable.name.sdsl",
                     "match": "([_[:alpha:]][_[:alnum:]]*)"
                 },
                 {
@@ -640,6 +673,9 @@
             "name": "entity.other.inherited-class",
             "patterns": [
                 {
+                    "include": "#comment"
+                },
+                {
                     "include": "#type"
                 },
                 {
@@ -662,6 +698,9 @@
                 },
                 {
                     "include": "#type-builtin"
+                },
+                {
+                    "include": "#type-buffer"
                 },
                 {
                     "include": "#type-name"
@@ -839,6 +878,17 @@
                     "name": "keyword.type.sdsl"
                 }
             }
+        },
+        "type-buffer": {
+            "name" : "buffer",
+            "begin": "(Buffer)\\s*\\<",
+            "end": "(?=\\>)",
+            "captures": {
+                "1" : {"name" : "entity.name.type"}
+            },
+            "patterns": [
+                {"include": "#type-builtin"}
+            ]
         },
         "comment": {
             "patterns": [
@@ -1169,7 +1219,14 @@
             "end": "(?=\\))",
             "beginCaptures": {
                 "1": {
-                    "name": "entity.name.function"
+                    "patterns": [
+                        {
+                            "include": "#intrinsics"
+                        },
+                        {
+                            "name" : "entity.name.function.sdsl"
+                        }
+                    ]
                 }
             },
             "patterns": [
@@ -1220,6 +1277,10 @@
         "punctuation-accessor": {
             "name": "punctuation.accessor.sdsl",
             "match": "\\."
+        },
+        "instrinsics" : {
+            "name" : "entity.name.function.intrinsics.sdsl",
+            "match": "(abort|abs|acos|all|any|asfloat|asint|asin|asuint|atan|ceil|clamp|clip|cos|cosh|coutbits|cross|ddx|ddx_coarse|ddx_fine|ddy|ddy_coarse|ddy_fine|degrees|determinant|distance|dot|dst|errorf|exp|exp2|f16tof32|f32tof16|faceforward|firstbithigh|firstbitlow|floor|fma|fmod|frac|frexp|fwidth|infinite|isinf|isnan|ldexp|length|lerp|lit|log|log10|log2|max|min|modf|msad4|mul|noise|normalize|pow|radians|rcp|reflect|refract|round|reversebits|rsqrt|saturate|sign|sincos|sinh|sin|smoothstep|sqrt|step|tanh|tan|tex1D|tex1Dbias|tex1Dgrad|tex1Dlod|tex1Dproj|tex2D|tex2Dbias|tex2Dgrad|tex2Dlod|tex2Dproj|tex3D|tex3Dbias|tex3Dgrad|tex3Dlod|tex3Dproj|texCUBE|texCUBEbias|texCUBEgrad|texCUBElod|texCUBEproj|transpose|trunc)"
         }
     },
     "scopeName": "source.sdsl"
