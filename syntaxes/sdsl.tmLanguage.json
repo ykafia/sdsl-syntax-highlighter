@@ -478,7 +478,7 @@
         "method-declaration": {
             "name": "declaration.shader.method.sdsl",
             "begin": "(([[:alpha:]]+)\\s+)?(([[:alpha:]]+)\\s+)?([[:alnum:]]+)\\s+([_[:alpha:]][_[:alnum:]]*)(?:(?!\\()\\s)*",
-            "end": "(?:(}|(\\)\\s*;)))",
+            "end": "(?:})",
             "beginCaptures": {
                 "2": {
                     "patterns": [
@@ -518,11 +518,14 @@
                 },
                 {
                     "name": "declaration.shader.method.body.sdsl",
-                    "begin": "(?={)",
+                    "begin": "{",
                     "end": "(?=})",
                     "patterns": [
                         {
                             "include": "#statements"
+                        },
+                        {
+                            "include": "#comment"
                         }
                     ]
                 }
