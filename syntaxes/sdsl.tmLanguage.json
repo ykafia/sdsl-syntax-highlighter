@@ -9,7 +9,7 @@
             "include": "#preprocessors"
         },
         {
-            "include": "#type-buffer"
+            "include": "#comment"
         }
     ],
     "repository": {
@@ -23,6 +23,9 @@
                 },
                 {
                     "include": "#punctuation-semicolon"
+                },
+                {
+                    "include": "#comment"
                 }
             ]
         },
@@ -106,6 +109,9 @@
                 }
             },
             "patterns": [
+                {
+                    "include": "#comment"
+                },
                 {
                     "patterns": [
                         {
