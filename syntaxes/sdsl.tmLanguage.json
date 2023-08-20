@@ -840,6 +840,9 @@
                     "include": "#builtin-constructor"
                 },
                 {
+                    "include": "#method-call"
+                },
+                {
                     "include": "#accessed"
                 },
                 {
@@ -1269,7 +1272,7 @@
         },
         "builtin-constructor": {
             "name": "builtin.constructor.sdsl",
-            "begin": "([[:alnum:]]+)\\s*\\(",
+            "begin": "((bool|s?byte|u?short|u?int|u?long|float|double)([2-4]?|([2-4]x[2-4])?)|void)\\s*\\(",
             "end": "(?=\\))",
             "beginCaptures": {
                 "1": {
