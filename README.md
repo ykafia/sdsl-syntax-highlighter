@@ -1,3 +1,5 @@
+DISCLAIMER : This repository has been archived, the development is continuing in the new [SDSL compiler repo](https://github.com/stride3D/sdsl) containing both the extension and a LSP.
+
 # SDSL syntax highlighter
 
 This is an extension to provide syntax highlighting for [SDSL language](https://stride3d.net).
